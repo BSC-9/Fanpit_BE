@@ -1,20 +1,24 @@
-import { Controller, Get, Post, Body, UsePipes } from '@nestjs/common';
+import { Controller, Post, Get, Body } from '@nestjs/common';
 import { ReservationsService } from './reservations.service';
-import { CreateReservationDto } from './dto/create-reservation.dto';
-import { ValidationPipe } from '../../common/pipes/validation.pipe';
 
 @Controller('reservations')
 export class ReservationsController {
-  constructor(private readonly reservationsService: ReservationsService) {}
-
-  @Get()
-  async findAll() {
-    return this.reservationsService.findAll();
-  }
+  constructor(private reservationsService: ReservationsService) {}
 
   @Post()
-  @UsePipes(new ValidationPipe())
-  async create(@Body() createReservationDto: CreateReservationDto) {
-    return this.reservationsService.create(createReservationDto);
+  create(
+    @Body()
+    body: { userId: string; spaceId: string; startAt: string; endAt: string },
+  ) {
+    return this.reservationsService.create({
+      ...body,
+      startAt: new Date(body.startAt),
+      endAt: new Date(body.endAt),
+    });
+  }
+
+  @Get()
+  findAll() {
+    return this.reservationsService.findAll();
   }
 }
