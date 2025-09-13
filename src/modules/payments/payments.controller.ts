@@ -1,5 +1,7 @@
-import { Controller, Get, Post, Body } from '@nestjs/common';
+import { Controller, Get, Post, Body, UsePipes } from '@nestjs/common';
 import { PaymentsService } from './payments.service';
+import { CreatePaymentDto } from './dto/create-payment.dto';
+import { ValidationPipe } from '../../common/pipes/validation.pipe';
 
 @Controller('payments')
 export class PaymentsController {
@@ -11,7 +13,8 @@ export class PaymentsController {
   }
 
   @Post()
-  async create(@Body() body: any) {
-    return this.paymentsService.create(body);
+  @UsePipes(new ValidationPipe())
+  async create(@Body() createPaymentDto: CreatePaymentDto) {
+    return this.paymentsService.create(createPaymentDto);
   }
 }
